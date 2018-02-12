@@ -23,24 +23,19 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.debug
+import org.jetbrains.anko.info
 import java.time.LocalDateTime
 
 /**
  * Simple layout behavior that will track the state of the AppBarLayout
  * and match its offset for a corresponding footer.
  */
-class FooterBarBehavior : CoordinatorLayout.Behavior<FrameLayout>, AnkoLogger {
+class FooterBarBehavior
+// Get this attribute from the XML layout//Required to attach behavior via XML
+(context: Context, attrs: AttributeSet) :
+        CoordinatorLayout.Behavior<FrameLayout>(context, attrs),
+        AnkoLogger {
     lateinit var value: String
-
-    //Required to instantiate as a default behavior
-    constructor()
-
-    //Required to attach behavior via XML
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        // Get this attribute from the XML layout
-        value = attrs.getAttributeValue("http://example.com", "my_key")
-    }
 
     //This is called to determine which views this behavior depends on
     override fun layoutDependsOn(parent: CoordinatorLayout,
@@ -48,7 +43,7 @@ class FooterBarBehavior : CoordinatorLayout.Behavior<FrameLayout>, AnkoLogger {
                                  dependency: View): Boolean {
         //We are watching changes in the AppBarLayout
         val dependencyMet = dependency is AppBarLayout
-        debug {
+        info {
             "CHECK: " +
                     "\nchild=${child.javaClass.simpleName}" +
                     ", dependency=${dependency.javaClass.simpleName}" +
@@ -62,9 +57,9 @@ class FooterBarBehavior : CoordinatorLayout.Behavior<FrameLayout>, AnkoLogger {
     override fun onDependentViewChanged(parent: CoordinatorLayout,
                                         child: FrameLayout,
                                         dependency: View): Boolean {
-        debug {
-            "ACT: "+
-                    "\nAppBarLayout changed!!!"+
+        info {
+            "ACT: " +
+                    "\nAppBarLayout changed!!!" +
                     "\nchild=${child.javaClass.simpleName}" +
                     ", dependency=${dependency.javaClass.simpleName}" +
                     ", tag=${getTag(child)}"
@@ -72,6 +67,10 @@ class FooterBarBehavior : CoordinatorLayout.Behavior<FrameLayout>, AnkoLogger {
         val offset = -dependency.top
         child.translationY = offset.toFloat()
         return true
+    }
+
+    init {
+        value = attrs.getAttributeValue("http://example.com", "my_key")
     }
 
 }
