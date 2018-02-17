@@ -37,6 +37,10 @@ class FooterBarBehavior
         AnkoLogger {
     lateinit var value: String
 
+    init {
+        value = attrs.getAttributeValue("http://example.com", "my_key")
+    }
+
     //This is called to determine which views this behavior depends on
     override fun layoutDependsOn(parent: CoordinatorLayout,
                                  child: FrameLayout,
@@ -67,10 +71,6 @@ class FooterBarBehavior
         val offset = -dependency.top
         child.translationY = offset.toFloat()
         return true
-    }
-
-    init {
-        value = attrs.getAttributeValue("http://example.com", "my_key")
     }
 
 }
