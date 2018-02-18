@@ -29,8 +29,8 @@ can be retrieved in the code.
 
 The `FooterBarBehavior` class extends `CoordinatorLayout.Behavior<FrameLayout>` and it implements 
 two methods:
-1. layoutDependsOn(parent: CoordinatorLayout,child: FrameLayout,dependency: View): Boolean
-2. onDependentViewChanged(parent: CoordinatorLayout, child: FrameLayout, dependency: View): Boolean
+1. `layoutDependsOn(parent: CoordinatorLayout,child: FrameLayout,dependency: View): Boolean`
+2. `onDependentViewChanged(parent: CoordinatorLayout, child: FrameLayout, dependency: View): Boolean`
 
 The first method checks to see if any of the children contained in the `CoordinatorLayout` are
 affected by this custom behavior.
