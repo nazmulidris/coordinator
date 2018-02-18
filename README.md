@@ -39,8 +39,8 @@ two methods:
 1. `layoutDependsOn(parent: CoordinatorLayout, child: FrameLayout, dependency: View): Boolean`. 
 This method is called multiple times to check if any of the children contained in 
 the `CoordinatorLayout` (`parent`) will affect this behavior. In this case, we declare that the 
-behavior of the `child` (`FrameLayout`) is affected by the any changes to the `AppBarLayout` 
-(`dependency`). 
+behavior of the `child` (`FrameLayout`, which this behavior is bound to in XML) is affected by the 
+any changes to the `AppBarLayout` (`dependency`). 
 
 2. `onDependentViewChanged(parent: CoordinatorLayout, child: FrameLayout, dependency: View): Boolean`. 
 If the first method found that there were views that this behavior has a dependency on, then this 
