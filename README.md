@@ -37,9 +37,10 @@ The `FooterBarBehavior` class extends `CoordinatorLayout.Behavior<FrameLayout>` 
 two methods:
 
 1. `layoutDependsOn(parent: CoordinatorLayout, child: FrameLayout, dependency: View): Boolean`. 
-This first checks to see if any of the children contained in the `CoordinatorLayout` will affect 
-this behavior. In this case, we declare that the behavior of the `child` (`FrameLayout`) is affected
-by the any changes to the `AppBarLayout` (`dependency`). 
+This method is called multiple times to check if any of the children contained in 
+the `CoordinatorLayout` will affect this behavior. In this case, we declare that the 
+behavior of the `child` (`FrameLayout`) is affected by the any changes to the `AppBarLayout` 
+(`dependency`). 
 
 2. `onDependentViewChanged(parent: CoordinatorLayout, child: FrameLayout, dependency: View): Boolean`. 
 If the first The second method then provides a way for the custom behavior to take 
