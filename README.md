@@ -45,5 +45,5 @@ behavior of the `child` (`FrameLayout`) is affected by the any changes to the `A
 2. `onDependentViewChanged(parent: CoordinatorLayout, child: FrameLayout, dependency: View): Boolean`. 
 If the first method found that there were views that this behavior has a dependency on, then this 
 second method will be called when those views change in any way. This provides this behavior the 
-opportunity to take some action on the dependent view, in reaction to some change that occurred in a 
-child of the `CooordinatorLayout` that this behavior depends on.
+opportunity to take some action on the `child` view, in reaction to some change in the `dependency`
+view.
