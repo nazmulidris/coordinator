@@ -141,4 +141,28 @@ class FooterBarBehavior
             "STOP NESTED SCROLL - NON_TOUCH"
         }
     }
+
+    override fun onNestedPreFling(coordinatorLayout: CoordinatorLayout,
+                                  child: FrameLayout,
+                                  target: View,
+                                  velocityX: Float,
+                                  velocityY: Float): Boolean {
+        info {
+            "NESTED PRE FLING, vX=$velocityX, vY=$velocityY"
+        }
+        return false
+    }
+
+    override fun onNestedFling(coordinatorLayout: CoordinatorLayout,
+                               child: FrameLayout,
+                               target: View,
+                               velocityX: Float,
+                               velocityY: Float,
+                               consumed: Boolean): Boolean {
+        info {
+            "NESTED FLING, vX=$velocityX, vY=$velocityY"
+        }
+        return false
+    }
+
 }
