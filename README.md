@@ -27,12 +27,21 @@ can be retrieved in the code.
 </CoordinatorLayout>
 ```
 
+Note that the custom behavior is bound to the `FrameLayout` child of `CoordinatorLayout`. Here are
+the arguments that are going to be passed to the methods of this custom behavior.
+1. `parent` - this is the `CoordinatorLayout` object itself.
+2. `child` - this is the `FrameLayout` object.
+3. `dependency` - this will contain object references to all the children of the `parent`.
+
 The `FooterBarBehavior` class extends `CoordinatorLayout.Behavior<FrameLayout>` and it implements 
 two methods:
-1. `layoutDependsOn(parent: CoordinatorLayout,child: FrameLayout,dependency: View): Boolean`. 
-The first method checks to see if any of the children contained in the `CoordinatorLayout` are
-affected by this custom behavior.
+
+1. `layoutDependsOn(parent: CoordinatorLayout, child: FrameLayout, dependency: View): Boolean`. 
+This first checks to see if any of the children contained in the `CoordinatorLayout` will affect 
+this behavior. In this case, we declare that the behavior of the `child` (`FrameLayout`) is affected
+by the any changes to the `AppBarLayout` (`dependency`). 
+
 2. `onDependentViewChanged(parent: CoordinatorLayout, child: FrameLayout, dependency: View): Boolean`. 
-The second method then provides a way for the custom behavior to take some action on the 
-dependent view, in reaction to some change that occurred in a child of the `CooordinatorLayout`
-that this behavior depends on.
+If the first The second method then provides a way for the custom behavior to take 
+some action on the dependent view, in reaction to some change that occurred in a child of 
+the `CooordinatorLayout` that this behavior depends on.
