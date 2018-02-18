@@ -67,6 +67,7 @@ Note that the namespace `http://example.com` must match whatever is defined in t
 <FrameLayout 
         xmlns:my_app="http://example.com"
         my_app:my_key="my_value"
-        ...
-        />
+        ...>
+    ...
+</FrameLayout>
 ```
