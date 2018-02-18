@@ -1,4 +1,4 @@
-# CoordinatorLayout and nested scrolling
+# `CoordinatorLayout` and nested scrolling
 
 This project is all about `CoordinatorLayout` and nested scrolling.
 
