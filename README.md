@@ -8,8 +8,8 @@ This project is all about `CoordinatorLayout` and nested scrolling.
 
 # Info about the code
 
-The main layout XML file has a `FrameLayout` view group that has a behavior 
-attached to it. It also has a key-value pair that is defined, which 
+The main layout XML file has a `FrameLayout` view group that has a custom behavior called 
+`FooterBarBehavior` attached to it. It also has a key-value pair that is defined, which 
 can be retrieved in the code.
 
 ```xml
