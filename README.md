@@ -30,7 +30,7 @@ can be retrieved in the code.
 Note that the custom behavior is bound to the `FrameLayout` child of `CoordinatorLayout`. Here are
 the arguments that are going to be passed to the methods of this custom behavior.
 1. `parent` - this is the `CoordinatorLayout` object itself.
-2. `child` - this is the `FrameLayout` object.
+2. `child` - this is the `FrameLayout` object that the behavior is bound to (see the XML above).
 3. `dependency` - this will contain object references to all the children of the `parent`.
 
 The `FooterBarBehavior` class extends `CoordinatorLayout.Behavior<FrameLayout>` and it implements 
