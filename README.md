@@ -38,7 +38,7 @@ two methods:
 
 1. `layoutDependsOn(parent: CoordinatorLayout, child: FrameLayout, dependency: View): Boolean`. 
 This method is called multiple times to check if any of the children contained in 
-the `CoordinatorLayout` will affect this behavior. In this case, we declare that the 
+the `CoordinatorLayout` (`parent`) will affect this behavior. In this case, we declare that the 
 behavior of the `child` (`FrameLayout`) is affected by the any changes to the `AppBarLayout` 
 (`dependency`). 
 
