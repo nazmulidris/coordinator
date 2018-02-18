@@ -1,14 +1,14 @@
-# coordinator
+# CoordinatorLayout and nested scrolling
 
 This project is all about `CoordinatorLayout` and nested scrolling.
 
-# Resources
+To learn more CoordinatorLayout, custom behaviors, and nested scrolling here are some great 
+articles:
+- [Intercepting everything with CoordinatorLayout Behaviors](https://goo.gl/oLH8pm)
+- [Experimenting with Nested Scrolling](https://goo.gl/w8Jrq2)
+- [Carry on Scrolling](https://goo.gl/1dwU8S)
 
-- [CoordinatorLayout and Behaviors (medium article)](https://goo.gl/oLH8pm)
-
-# Info about the code
-
-## Attaching the custom behavior to a child of the `CoordinatorLayout`
+# Attaching the custom behavior to a child of the `CoordinatorLayout`
 
 The main layout XML file has a `FrameLayout` view group that has a custom behavior called 
 `FooterBarBehavior` attached to it. It also has a key-value pair that is defined, which 
@@ -77,3 +77,12 @@ Note that the namespace `http://example.com` must match whatever is defined in t
     ...
 </FrameLayout>
 ```
+
+# Nested scrolling
+
+In Android, the child view that intercepts the touch event gets to consume them. This poses a 
+problem for nested scrolling, since the child view that is nested underneath the parent needs to 
+be able to not consume all of the touch events, but pass them to the parent as well. This goes 
+against the way that touch events are consumed by default. This is where 
+[`NestedScrollingParent`](https://goo.gl/YpqYMf)and [`NestedScrollingChild`](https://goo.gl/PFxcpH) 
+come into play. 

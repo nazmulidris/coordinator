@@ -19,6 +19,7 @@ package engineering.uxd.example.coordinator
 import android.content.Context
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CoordinatorLayout
+import android.support.v4.view.ViewCompat
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
@@ -79,4 +80,65 @@ class FooterBarBehavior
         return true
     }
 
+    override fun onDependentViewRemoved(parent: CoordinatorLayout,
+                                        child: FrameLayout,
+                                        dependency: View) {
+        info {
+            "REACT TO DEPENDENCY BEING REMOVED " +
+                    "\nAppBarLayout removed!!!" +
+                    "\nchild=${child.javaClass.simpleName}" +
+                    ", dependency=${dependency.javaClass.simpleName}" +
+                    ", tag=${getTag(child)}"
+        }
+    }
+
+    override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout,
+                                     child: FrameLayout,
+                                     directTargetChild: View,
+                                     target: View,
+                                     axes: Int,
+                                     type: Int): Boolean {
+        if (type == ViewCompat.TYPE_NON_TOUCH) info {
+            "START NESTED SCROLL - NON_TOUCH"
+        }
+        return axes == ViewCompat.SCROLL_AXIS_VERTICAL ||
+                super.onStartNestedScroll(
+                        coordinatorLayout, child, directTargetChild, target, axes, type)
+    }
+
+    override fun onNestedPreScroll(coordinatorLayout: CoordinatorLayout,
+                                   child: FrameLayout,
+                                   target: View,
+                                   dx: Int,
+                                   dy: Int,
+                                   consumed: IntArray,
+                                   type: Int) {
+        if (type == ViewCompat.TYPE_NON_TOUCH) info {
+            "\tNESTED PRE SCROLL - NON_TOUCH dx= $dx, dy= $dy"
+        }
+    }
+
+    override fun onNestedScroll(coordinatorLayout: CoordinatorLayout,
+                                child: FrameLayout,
+                                target: View,
+                                dxConsumed: Int,
+                                dyConsumed: Int,
+                                dxUnconsumed: Int,
+                                dyUnconsumed: Int,
+                                type: Int) {
+        if (type == ViewCompat.TYPE_NON_TOUCH) info {
+            "\t\tNESTED SCROLL - NON_TOUCH " +
+                    "dxC=$dxConsumed, dyC=$dyConsumed, " +
+                    "dxUC=$dxUnconsumed, dyUC=$dyUnconsumed"
+        }
+    }
+
+    override fun onStopNestedScroll(coordinatorLayout: CoordinatorLayout,
+                                    child: FrameLayout,
+                                    target: View,
+                                    type: Int) {
+        if (type == ViewCompat.TYPE_NON_TOUCH) info {
+            "STOP NESTED SCROLL - NON_TOUCH"
+        }
+    }
 }
