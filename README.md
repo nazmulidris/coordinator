@@ -55,10 +55,17 @@ view.
 
 ## Key Value pairs
 The following code in the behavior class constructor shows how to retrieve the key-value pair 
-that is declared in the XML layout above. 
+that is declared in the XML layout above. When the custom behavior is declared in the XML the 
+following constructor is called (with `Context` and `AttributeSet`). The key-value pairs can then
+be retrieved from the `AttributeSet` argument.
+
 ```kotlin
-init {
-    value = attrs.getAttributeValue("http://example.com", "my_key")
+class FooterBarBehavior(context: Context, attrs: AttributeSet) : 
+    CoordinatorLayout.Behavior<FrameLayout>(context, attrs) {
+    init {
+        value = attrs.getAttributeValue("http://example.com", "my_key")
+    }
+    ...
 }
 ```
 
