@@ -41,14 +41,17 @@ class FooterBarBehavior
         value = attrs.getAttributeValue("http://example.com", "my_key")
     }
 
-    //This is called to determine which views this behavior depends on
+    /**
+     * This custom behavior depends on the [AppBarLayout] object. So make sure to return
+     * `true` when the `dependency` matches [AppBarLayout].
+     */
     override fun layoutDependsOn(parent: CoordinatorLayout,
                                  child: FrameLayout,
                                  dependency: View): Boolean {
-        //We are watching changes in the AppBarLayout
+        //We are only interested in watching changes in the AppBarLayout
         val dependencyMet = dependency is AppBarLayout
         info {
-            "CHECK: " +
+            "DEPENDENCY CHECK: " +
                     "\nchild=${child.javaClass.simpleName}" +
                     ", dependency=${dependency.javaClass.simpleName}" +
                     if (dependencyMet) " <- YES!!!" else ""
@@ -57,12 +60,15 @@ class FooterBarBehavior
         return dependencyMet
     }
 
-    //This is called for each change to a dependent view
+    /**
+     * This is called when the [AppBarLayout] `dependency` changes in any way. This provides
+     * us an opportunity to make a change to the [FrameLayout] `child`.
+     */
     override fun onDependentViewChanged(parent: CoordinatorLayout,
                                         child: FrameLayout,
                                         dependency: View): Boolean {
         info {
-            "ACT: " +
+            "REACT TO DEPENDENCY CHANGE: " +
                     "\nAppBarLayout changed!!!" +
                     "\nchild=${child.javaClass.simpleName}" +
                     ", dependency=${dependency.javaClass.simpleName}" +
