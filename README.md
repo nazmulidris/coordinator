@@ -64,8 +64,7 @@ init {
 
 Note that the namespace `http://example.com` must match whatever is defined in the XML. 
 ```xml
-<FrameLayout 
-        xmlns:my_app="http://example.com"
+<FrameLayout xmlns:my_app="http://example.com"
         my_app:my_key="my_value"
         ...>
     ...
