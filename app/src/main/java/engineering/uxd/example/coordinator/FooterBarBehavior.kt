@@ -144,7 +144,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
             if (rvStoppedScrolling && abs(dyConsumed) == 0 && abs(dyUnconsumed) > 0) {
                 flingData.stopDetected = true
                 flingData.startTime = System.currentTimeMillis()
-                flingData.dY = dyUnconsumed
+                flingData.dY = abs(dyUnconsumed)
                 info {
                     "\t\t\t[DO SOMETHING] NESTED SCROLL - NON_TOUCH " +
                             "\n\t\t\t\t$flingData"
@@ -192,11 +192,13 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
 
     data class FlingData(var vY: Float = 0f,
                          var dY: Int = 0,
+                         var maxDy: Int = 0,
                          var stopDetected: Boolean = false,
                          var startTime: Long = 0) {
         fun reset() {
             vY = 0f
             dY = 0
+            maxDy = 0
             stopDetected = false
             startTime = 0
         }
@@ -207,7 +209,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
     }
 
     private fun doStoppedAnimation(dyUnconsumed: Int, target: View) {
-        var fraction: Float = Math.abs(dyUnconsumed.toFloat() / flingData.dY.toFloat())
+        var fraction: Float = abs(dyUnconsumed.toFloat() / flingData.dY.toFloat())
         if (fraction > 1f) fraction = 1f
         val rv = target as? RecyclerView
         rv?.alpha = (1f - fraction)
