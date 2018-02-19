@@ -41,17 +41,58 @@ the arguments that are going to be passed to the methods of this custom behavior
 The `FooterBarBehavior` class extends `CoordinatorLayout.Behavior<FrameLayout>` and it implements 
 two methods:
 
-1. `layoutDependsOn(parent: CoordinatorLayout, child: FrameLayout, dependency: View): Boolean`. 
+1. `layoutDependsOn(parent: CoordinatorLayout, child: FrameLayout, dependency: View)`. 
 This method is called multiple times to check if any of the children contained in 
 the `CoordinatorLayout` (`parent`) will affect this behavior. In this case, we declare that the 
 behavior of the `child` (`FrameLayout`, which this behavior is bound to in XML) is affected by the 
 any changes to the `AppBarLayout` (`dependency`). 
 
-2. `onDependentViewChanged(parent: CoordinatorLayout, child: FrameLayout, dependency: View): Boolean`. 
+```kotlin
+/**
+ * This custom behavior depends on the [AppBarLayout] object. So make sure to return
+ * `true` when the `dependency` matches [AppBarLayout].
+ */
+override fun layoutDependsOn(parent: CoordinatorLayout,
+                             child: FrameLayout,
+                             dependency: View): Boolean {
+    //We are only interested in watching changes in the AppBarLayout
+    val dependencyMet = dependency is AppBarLayout
+    info {
+        "DEPENDENCY CHECK: " +
+                "\nchild=${child.javaClass.simpleName}" +
+                ", dependency=${dependency.javaClass.simpleName}" +
+                if (dependencyMet) " <- YES!!!" else ""
+    }
+    setTag(child, "$value, ${LocalDateTime.now()}")
+    return dependencyMet
+}
+```
+
+2. `onDependentViewChanged(parent: CoordinatorLayout, child: FrameLayout, dependency: View)`. 
 If the first method found that there were views that this behavior has a dependency on, then this 
 second method will be called when those views change in any way. This provides this behavior the 
 opportunity to take some action on the `child` view, in reaction to some change in the `dependency`
 view.
+```kotlin
+/**
+ * This is called when the [AppBarLayout] `dependency` changes in any way. This provides
+ * us an opportunity to make a change to the [FrameLayout] `child`.
+ */
+override fun onDependentViewChanged(parent: CoordinatorLayout,
+                                    child: FrameLayout,
+                                    dependency: View): Boolean {
+    info {
+        "REACT TO DEPENDENCY CHANGE: " +
+                "\nAppBarLayout changed!!!" +
+                "\nchild=${child.javaClass.simpleName}" +
+                ", dependency=${dependency.javaClass.simpleName}" +
+                ", tag=${getTag(child)}"
+    }
+    val offset = -dependency.top
+    child.translationY = offset.toFloat()
+    return true
+}
+```
 
 ## Key Value pairs
 The following code in the behavior class constructor shows how to retrieve the key-value pair 
@@ -86,3 +127,55 @@ be able to not consume all of the touch events, but pass them to the parent as w
 against the way that touch events are consumed by default. This is where 
 [`NestedScrollingParent`](https://goo.gl/YpqYMf)and [`NestedScrollingChild`](https://goo.gl/PFxcpH) 
 come into play. 
+
+The main methods that come into play when attempting to detect when the user has flung the 
+RecyclerView and it has reached either the top or bottom and can't scroll anymore. Scrolling 
+occurs while the user is still touching the screen and moving the RecyclerView around. As soon as
+they lift their finger, the fling starts. This causes the RecyclerView to move up or down. At 
+some point it hits the top / bottom edge and can't scroll anymore. At this point, we want to 
+respond to this by either shaking or doing some other animation on the RecyclerView to let the 
+user know that they've hit the edges of the RecyclerView. 
+
+## `onStartNestedScroll`
+As soon as the user scrolls the RV, this method is called. 
+This method gives our custom behavior the ability to snoop on the RV scrolling. We return `true` 
+if the scrolling is occurring on the Y axis. Also, the `type` parameter is important since it 
+lets us know whether this scrolling is happening with a user touching the screen (scroll) or not
+(fling).
+```kotlin
+override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout,
+                                 child: FrameLayout,
+                                 directTargetChild: View,
+                                 target: View,
+                                 axes: Int,
+                                 type: Int): Boolean {
+    if (type == ViewCompat.TYPE_NON_TOUCH) {
+        info {
+            "START NESTED SCROLL - NON_TOUCH - fling"
+        }
+    }else {
+        info {
+            "START NESTED SCROLL - TOUCH - scroll"
+        }
+    }
+    return axes == ViewCompat.SCROLL_AXIS_VERTICAL ||
+        super.onStartNestedScroll(
+                coordinatorLayout, child, directTargetChild, target, axes, type)
+}
+```
+
+## `onNestedScroll`
+This method is called repeatedly while the RV scrolls (fling or scroll). 
+In this method we can determine if the user has flung the RV and it has can't scroll anymore. The
+`type` parameter lets us know if whether the user has flung (`TYPE_NON_TOUCH`) or if the user is 
+scrolling (`TYPE_TOUCH`). And if `dyUnconsumed` has an integer (that is > 0) this means that
+the RV has stopped consuming the Y axis movement, the remainder dY value is unconsumed. This
+provides us a trigger to then do something w/ this left over velocity, after the RV has stopped
+scrolling. This method keeps getting called until the nested scroll has ended (when 
+`onStopNestedScroll` is called).
+
+While this method is getting called, the user is free to move the RV. They can launch another 
+scroll / fling gesture while the previous one is settling. In this case the `onNestedFling` method
+will be called, and that allows us to know that the fling / scroll operation begins again. The
+`FlingData` object is reset when this occurs. The reset also occurs when the `onStopNestedScroll`
+is called (and the overscroll comes to an end after settling).
