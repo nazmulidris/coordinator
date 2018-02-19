@@ -19,6 +19,7 @@ package engineering.uxd.example.coordinator
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -29,8 +30,8 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        val adapter = AndroidVersionNamesAdapter(list)
-        list.adapter = adapter
-        list.layoutManager = LinearLayoutManager(this)
+        val adapter = AndroidVersionNamesAdapter(recyclerview_main_activity)
+        recyclerview_main_activity.adapter = adapter
+        recyclerview_main_activity.layoutManager = LinearLayoutManager(this)
     }
 }

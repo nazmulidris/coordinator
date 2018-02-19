@@ -141,6 +141,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                 if (absDyUC < flingData.maxDyUC) {
                     flingData.rvIsStopped = true
                     flingData.startTime = System.currentTimeMillis()
+                    flingData.rvHeight = target.height
                     context.toast(flingData.toString())
                     info {
                         "\t\t\t[DO SOMETHING] NESTED SCROLL - NON_TOUCH " +
@@ -207,16 +208,20 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
     data class FlingData(var vY: Float = 0f,
                          var maxDyUC: Int = 0,
                          var rvIsStopped: Boolean = false,
-                         var startTime: Long = 0) {
+                         var startTime: Long = 0,
+                         var rvHeight: Int = 0) {
         fun reset() {
             vY = 0f
             maxDyUC = 0
             rvIsStopped = false
             startTime = 0
+            rvHeight = 0
         }
 
         override fun toString(): String {
-            return "FlingData(vY=$vY, maxDyUC=$maxDyUC, isStopped=$rvIsStopped)"
+            val ratio = (maxDyUC.toFloat() / rvHeight.toFloat() * 100).toInt()
+            return "FlingData(vY=$vY, maxDyUC=$maxDyUC, rvH=$rvHeight, " +
+                    "ratio=$ratio%, rvStopped=$rvIsStopped)"
         }
     }
 
