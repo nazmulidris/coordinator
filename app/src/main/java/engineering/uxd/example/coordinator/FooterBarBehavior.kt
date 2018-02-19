@@ -152,7 +152,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                 }
             }
 
-            paintOverScroll(dyUnconsumed, target)
+            //paintOverScroll(dyUnconsumed, target)
 
         } else {
 
