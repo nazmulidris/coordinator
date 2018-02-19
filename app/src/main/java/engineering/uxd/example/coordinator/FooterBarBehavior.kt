@@ -153,24 +153,15 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
             }
     }
 
-    private fun doStoppedAnimation(dyUnconsumed: Int, target: View) {
-        var fraction: Float = Math.abs(dyUnconsumed.toFloat() / flingData.dY.toFloat())
-        if (fraction > 1f) fraction = 1f
-        val rv = target as? RecyclerView
-        rv?.alpha = (1f - fraction)
-        info { "\t\t\t\tNESTED fraction: $fraction" }
-    }
-
     override fun onStopNestedScroll(coordinatorLayout: CoordinatorLayout,
                                     child: FrameLayout,
                                     target: View,
                                     type: Int) {
-        flingData.stopDetected = false
-        flingData.endTime = System.currentTimeMillis()
         if (type == ViewCompat.TYPE_NON_TOUCH) info {
             "STOP NESTED SCROLL - NON_TOUCH, elapsed time = " +
-                    "${flingData.endTime - flingData.startTime}"
+                    "${System.currentTimeMillis() - flingData.startTime}"
         }
+        flingData.reset()
     }
 
     override fun onNestedPreFling(coordinatorLayout: CoordinatorLayout,
@@ -202,10 +193,24 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
     data class FlingData(var vY: Float = 0f,
                          var dY: Int = 0,
                          var stopDetected: Boolean = false,
-                         var startTime: Long = 0,
-                         var endTime: Long = 0)
+                         var startTime: Long = 0) {
+        fun reset() {
+            vY = 0f
+            dY = 0
+            stopDetected = false
+            startTime = 0
+        }
+    }
 
     private fun recyclerViewJustHitStop() {
         context.toast(flingData.toString())
+    }
+
+    private fun doStoppedAnimation(dyUnconsumed: Int, target: View) {
+        var fraction: Float = Math.abs(dyUnconsumed.toFloat() / flingData.dY.toFloat())
+        if (fraction > 1f) fraction = 1f
+        val rv = target as? RecyclerView
+        rv?.alpha = (1f - fraction)
+        info { "\t\t\t\tNESTED fraction: $fraction" }
     }
 }
