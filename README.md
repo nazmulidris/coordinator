@@ -41,7 +41,7 @@ the arguments that are going to be passed to the methods of this custom behavior
 The `FooterBarBehavior` class extends `CoordinatorLayout.Behavior<FrameLayout>` and it implements 
 two methods:
 
-1. `layoutDependsOn(parent: CoordinatorLayout, child: FrameLayout, dependency: View)`. 
+### 1. `layoutDependsOn(parent: CoordinatorLayout, child: FrameLayout, dependency: View)`
 This method is called multiple times to check if any of the children contained in 
 the `CoordinatorLayout` (`parent`) will affect this behavior. In this case, we declare that the 
 behavior of the `child` (`FrameLayout`, which this behavior is bound to in XML) is affected by the 
@@ -68,7 +68,7 @@ override fun layoutDependsOn(parent: CoordinatorLayout,
 }
 ```
 
-2. `onDependentViewChanged(parent: CoordinatorLayout, child: FrameLayout, dependency: View)`. 
+### 2. `onDependentViewChanged(parent: CoordinatorLayout, child: FrameLayout, dependency: View)`
 If the first method found that there were views that this behavior has a dependency on, then this 
 second method will be called when those views change in any way. This provides this behavior the 
 opportunity to take some action on the `child` view, in reaction to some change in the `dependency`
@@ -136,7 +136,7 @@ some point it hits the top / bottom edge and can't scroll anymore. At this point
 respond to this by either shaking or doing some other animation on the RecyclerView to let the 
 user know that they've hit the edges of the RecyclerView. 
 
-## `onStartNestedScroll`
+## 1. `onStartNestedScroll`
 As soon as the user scrolls the RV, this method is called. 
 This method gives our custom behavior the ability to snoop on the RV scrolling. We return `true` 
 if the scrolling is occurring on the Y axis. Also, the `type` parameter is important since it 
@@ -164,7 +164,7 @@ override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout,
 }
 ```
 
-## `onNestedScroll`
+## 2. `onNestedScroll`
 This method is called repeatedly while the RV scrolls (fling or scroll). 
 In this method we can determine if the user has flung the RV and it has can't scroll anymore. The
 `type` parameter lets us know if whether the user has flung (`TYPE_NON_TOUCH`) or if the user is 
