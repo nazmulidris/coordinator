@@ -20,27 +20,24 @@ import android.content.Context
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.view.ViewCompat
+import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
+import org.jetbrains.anko.toast
 import java.time.LocalDateTime
+import kotlin.math.abs
 
 /**
  * Simple layout behavior that will track the state of the AppBarLayout
  * and match its offset for a corresponding footer.
  */
-class FooterBarBehavior
-// Get this attribute from the XML layout//Required to attach behavior via XML
-(context: Context, attrs: AttributeSet) :
+class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
         CoordinatorLayout.Behavior<FrameLayout>(context, attrs),
         AnkoLogger {
-    lateinit var value: String
-
-    init {
-        value = attrs.getAttributeValue("http://example.com", "my_key")
-    }
+    var value: String = attrs.getAttributeValue("http://example.com", "my_key")
 
     /**
      * This custom behavior depends on the [AppBarLayout] object. So make sure to return
@@ -113,9 +110,9 @@ class FooterBarBehavior
                                    dy: Int,
                                    consumed: IntArray,
                                    type: Int) {
-        if (type == ViewCompat.TYPE_NON_TOUCH) info {
-            "\tNESTED PRE SCROLL - NON_TOUCH dx= $dx, dy= $dy"
-        }
+//        if (type == ViewCompat.TYPE_NON_TOUCH) info {
+//            "\tNESTED PRE SCROLL - NON_TOUCH dx= $dx, dy= $dy"
+//        }
     }
 
     override fun onNestedScroll(coordinatorLayout: CoordinatorLayout,
@@ -126,19 +123,53 @@ class FooterBarBehavior
                                 dxUnconsumed: Int,
                                 dyUnconsumed: Int,
                                 type: Int) {
-        if (type == ViewCompat.TYPE_NON_TOUCH) info {
-            "\t\tNESTED SCROLL - NON_TOUCH " +
-                    "dxC=$dxConsumed, dyC=$dyConsumed, " +
-                    "dxUC=$dxUnconsumed, dyUC=$dyUnconsumed"
+        // RV has hit the top / bottom edge and can't scroll anymore.
+        val rvStoppedScrolling = type == ViewCompat.TYPE_NON_TOUCH && abs(dyUnconsumed) > 0
+
+        if (rvStoppedScrolling) {
+            doStoppedAnimation(dyUnconsumed, target)
+            info {
+                "\t\t[RV_STOP] NESTED SCROLL - NON_TOUCH " +
+                        "dxC=$dxConsumed, dyC=$dyConsumed, " +
+                        "dxUC=$dxUnconsumed, dyUC=$dyUnconsumed"
+            }
+        } else {
+            info {
+                "\t\t[RV_MOVE] NESTED SCROLL - NON_TOUCH " +
+                        "dxC=$dxConsumed, dyC=$dyConsumed, " +
+                        "dxUC=$dxUnconsumed, dyUC=$dyUnconsumed"
+            }
         }
+        if (!flingData.stopDetected)
+            if (rvStoppedScrolling && abs(dyConsumed) == 0 && abs(dyUnconsumed) > 0) {
+                flingData.stopDetected = true
+                flingData.startTime = System.currentTimeMillis()
+                flingData.dY = dyUnconsumed
+                info {
+                    "\t\t\t[DO SOMETHING] NESTED SCROLL - NON_TOUCH " +
+                            "\n\t\t\t\t$flingData"
+                }
+                recyclerViewJustHitStop()
+            }
+    }
+
+    private fun doStoppedAnimation(dyUnconsumed: Int, target: View) {
+        var fraction: Float = Math.abs(dyUnconsumed.toFloat() / flingData.dY.toFloat())
+        if (fraction > 1f) fraction = 1f
+        val rv = target as? RecyclerView
+        rv?.alpha = (1f - fraction)
+        info { "\t\t\t\tNESTED fraction: $fraction" }
     }
 
     override fun onStopNestedScroll(coordinatorLayout: CoordinatorLayout,
                                     child: FrameLayout,
                                     target: View,
                                     type: Int) {
+        flingData.stopDetected = false
+        flingData.endTime = System.currentTimeMillis()
         if (type == ViewCompat.TYPE_NON_TOUCH) info {
-            "STOP NESTED SCROLL - NON_TOUCH"
+            "STOP NESTED SCROLL - NON_TOUCH, elapsed time = " +
+                    "${flingData.endTime - flingData.startTime}"
         }
     }
 
@@ -159,10 +190,22 @@ class FooterBarBehavior
                                velocityX: Float,
                                velocityY: Float,
                                consumed: Boolean): Boolean {
+        flingData.vY = velocityY
         info {
             "NESTED FLING, vX=$velocityX, vY=$velocityY"
         }
         return false
     }
 
+    val flingData = FlingData()
+
+    data class FlingData(var vY: Float = 0f,
+                         var dY: Int = 0,
+                         var stopDetected: Boolean = false,
+                         var startTime: Long = 0,
+                         var endTime: Long = 0)
+
+    private fun recyclerViewJustHitStop() {
+        context.toast(flingData.toString())
+    }
 }
