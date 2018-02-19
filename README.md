@@ -123,25 +123,25 @@ Note that the namespace `http://example.com` must match whatever is defined in t
 
 In Android, the child view that intercepts the touch event gets to consume them. This poses a 
 problem for nested scrolling, since the child view that is nested underneath the parent needs to 
-be able to not consume all of the touch events, but pass them to the parent as well. This goes 
-against the way that touch events are consumed by default. This is where 
+be able to share some of the touch events w/ its parent and not consume all of them. This 
+goes against the way that touch events are consumed by default. This is where 
 [`NestedScrollingParent`](https://goo.gl/YpqYMf)and [`NestedScrollingChild`](https://goo.gl/PFxcpH) 
 come into play. 
 
 The main methods that come into play when attempting to detect when the user has flung the 
-RecyclerView and it has reached either the top or bottom and can't scroll anymore. Scrolling 
-occurs while the user is still touching the screen and moving the RecyclerView around. As soon as
-they lift their finger, the fling starts. This causes the RecyclerView to move up or down. At 
+`RecyclerView` and it has reached either the top or bottom and can't scroll anymore. Scrolling 
+occurs while the user is still touching the screen and moving the `RecyclerView` around. As soon as
+they lift their finger, the fling starts. This causes the `RecyclerView` to move up or down. At 
 some point it hits the top / bottom edge and can't scroll anymore. At this point, we want to 
-respond to this by either shaking or doing some other animation on the RecyclerView to let the 
-user know that they've hit the edges of the RecyclerView. 
+respond to this by either shaking or doing some other animation on the `RecyclerView` to let the 
+user know that they've hit the edges of the `RecyclerView`. 
 
 ## 1. `onStartNestedScroll`
-As soon as the user scrolls the RV, this method is called. 
-This method gives our custom behavior the ability to snoop on the RV scrolling. We return `true` 
-if the scrolling is occurring on the Y axis. Also, the `type` parameter is important since it 
-lets us know whether this scrolling is happening with a user touching the screen (scroll) or not
-(fling).
+As soon as the user scrolls the `RecyclerView`, this method is called. 
+This method gives our custom behavior the ability to snoop on the `RecyclerView` scrolling. 
+We return `true` if the scrolling is occurring on the Y axis. Also, the `type` parameter is 
+important since it lets us know whether this scrolling is happening with a user touching 
+the screen (scroll) or not (fling).
 ```kotlin
 override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout,
                                  child: FrameLayout,
@@ -165,17 +165,18 @@ override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout,
 ```
 
 ## 2. `onNestedScroll`
-This method is called repeatedly while the RV scrolls (fling or scroll). 
-In this method we can determine if the user has flung the RV and it has can't scroll anymore. The
-`type` parameter lets us know if whether the user has flung (`TYPE_NON_TOUCH`) or if the user is 
-scrolling (`TYPE_TOUCH`). And if `dyUnconsumed` has an integer (that is > 0) this means that
-the RV has stopped consuming the Y axis movement, the remainder dY value is unconsumed. This
-provides us a trigger to then do something w/ this left over velocity, after the RV has stopped
-scrolling. This method keeps getting called until the nested scroll has ended (when 
-`onStopNestedScroll` is called).
+This method is called repeatedly while the `RecyclerView` scrolls (fling or scroll). 
+In this method we can determine if the user has flung the `RecyclerView` and it has 
+can't scroll anymore. The `type` parameter lets us know if whether the user has flung 
+(`TYPE_NON_TOUCH`) or if the user is scrolling (`TYPE_TOUCH`). And if `dyUnconsumed` 
+has an integer (that is > 0) this means that the `RecyclerView` has stopped consuming 
+the Y axis movement, the remainder dY value is unconsumed. This
+provides us a trigger to then do something w/ this left over velocity, after the 
+`RecyclerView` has stopped scrolling. This method keeps getting called until the 
+nested scroll has ended (when `onStopNestedScroll` is called).
 
-While this method is getting called, the user is free to move the RV. They can launch another 
-scroll / fling gesture while the previous one is settling. In this case the `onNestedFling` method
-will be called, and that allows us to know that the fling / scroll operation begins again. The
-`FlingData` object is reset when this occurs. The reset also occurs when the `onStopNestedScroll`
-is called (and the overscroll comes to an end after settling).
+While this method is getting called, the user is free to move the `RecyclerView`. 
+They can launch another scroll / fling gesture while the previous one is settling. In this case 
+the `onNestedFling` method will be called, and that allows us to know that the fling / scroll 
+operation begins again. The `FlingData` object is reset when this occurs. The reset also occurs 
+when the `onStopNestedScroll` is called (and the overscroll comes to an end after settling).
