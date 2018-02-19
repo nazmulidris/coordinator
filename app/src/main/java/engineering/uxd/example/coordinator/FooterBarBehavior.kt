@@ -95,8 +95,10 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                                      target: View,
                                      axes: Int,
                                      type: Int): Boolean {
-        if (type == ViewCompat.TYPE_NON_TOUCH) info {
-            "START NESTED SCROLL - NON_TOUCH"
+        if (type == ViewCompat.TYPE_NON_TOUCH) {
+            info {
+                "START NESTED SCROLL - NON_TOUCH"
+            }
         }
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL ||
                 super.onStartNestedScroll(
@@ -124,44 +126,56 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                                 dyUnconsumed: Int,
                                 type: Int) {
         // RV has hit the top / bottom edge and can't scroll anymore.
-        val rvStoppedScrolling = type == ViewCompat.TYPE_NON_TOUCH && abs(dyUnconsumed) > 0
+        val absDyUC = abs(dyUnconsumed)
+        val rvStoppedScrolling = type == ViewCompat.TYPE_NON_TOUCH && absDyUC > 0
 
         if (rvStoppedScrolling) {
-            doStoppedAnimation(dyUnconsumed, target)
+
             info {
                 "\t\t[RV_STOP] NESTED SCROLL - NON_TOUCH " +
                         "dxC=$dxConsumed, dyC=$dyConsumed, " +
                         "dxUC=$dxUnconsumed, dyUC=$dyUnconsumed"
             }
+
+            if (!flingData.rvIsStopped) {
+                if (absDyUC < flingData.maxDyUC) {
+                    flingData.rvIsStopped = true
+                    flingData.startTime = System.currentTimeMillis()
+                    context.toast(flingData.toString())
+                    info {
+                        "\t\t\t[DO SOMETHING] NESTED SCROLL - NON_TOUCH " +
+                                "\n\t\t\t\t$flingData"
+                    }
+                } else {
+                    flingData.maxDyUC = absDyUC
+                }
+            }
+
+            doStoppedAnimation(dyUnconsumed, target)
+
         } else {
+
             info {
                 "\t\t[RV_MOVE] NESTED SCROLL - NON_TOUCH " +
                         "dxC=$dxConsumed, dyC=$dyConsumed, " +
                         "dxUC=$dxUnconsumed, dyUC=$dyUnconsumed"
             }
+
         }
-        if (!flingData.stopDetected)
-            if (rvStoppedScrolling && abs(dyConsumed) == 0 && abs(dyUnconsumed) > 0) {
-                flingData.stopDetected = true
-                flingData.startTime = System.currentTimeMillis()
-                flingData.dY = abs(dyUnconsumed)
-                info {
-                    "\t\t\t[DO SOMETHING] NESTED SCROLL - NON_TOUCH " +
-                            "\n\t\t\t\t$flingData"
-                }
-                recyclerViewJustHitStop()
-            }
+
     }
 
     override fun onStopNestedScroll(coordinatorLayout: CoordinatorLayout,
                                     child: FrameLayout,
                                     target: View,
                                     type: Int) {
-        if (type == ViewCompat.TYPE_NON_TOUCH) info {
-            "STOP NESTED SCROLL - NON_TOUCH, elapsed time = " +
-                    "${System.currentTimeMillis() - flingData.startTime}"
+        if (type == ViewCompat.TYPE_NON_TOUCH) {
+            info {
+                "STOP NESTED SCROLL - NON_TOUCH, elapsed time = " +
+                        "${System.currentTimeMillis() - flingData.startTime}"
+            }
+            flingData.reset()
         }
-        flingData.reset()
     }
 
     override fun onNestedPreFling(coordinatorLayout: CoordinatorLayout,
@@ -191,28 +205,29 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
     val flingData = FlingData()
 
     data class FlingData(var vY: Float = 0f,
-                         var dY: Int = 0,
-                         var maxDy: Int = 0,
-                         var stopDetected: Boolean = false,
+                         var maxDyUC: Int = 0,
+                         var rvIsStopped: Boolean = false,
                          var startTime: Long = 0) {
         fun reset() {
             vY = 0f
-            dY = 0
-            maxDy = 0
-            stopDetected = false
+            maxDyUC = 0
+            rvIsStopped = false
             startTime = 0
+        }
+
+        override fun toString(): String {
+            return "FlingData(vY=$vY, maxDyUC=$maxDyUC, isStopped=$rvIsStopped)"
         }
     }
 
-    private fun recyclerViewJustHitStop() {
-        context.toast(flingData.toString())
+    private fun doStoppedAnimation(dyUnconsumed: Int, target: View) {
+        if (flingData.rvIsStopped) {
+            var fraction: Float = abs(dyUnconsumed.toFloat() / flingData.maxDyUC.toFloat())
+            if (fraction > 1f) fraction = 1f
+            val rv = target as? RecyclerView
+            rv?.alpha = (1f - fraction)
+            info { "\t\t\t\tNESTED fraction: $fraction" }
+        }
     }
 
-    private fun doStoppedAnimation(dyUnconsumed: Int, target: View) {
-        var fraction: Float = abs(dyUnconsumed.toFloat() / flingData.dY.toFloat())
-        if (fraction > 1f) fraction = 1f
-        val rv = target as? RecyclerView
-        rv?.alpha = (1f - fraction)
-        info { "\t\t\t\tNESTED fraction: $fraction" }
-    }
 }
