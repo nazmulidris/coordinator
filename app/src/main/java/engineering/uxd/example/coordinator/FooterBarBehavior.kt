@@ -105,17 +105,17 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                         coordinatorLayout, child, directTargetChild, target, axes, type)
     }
 
-    override fun onNestedPreScroll(coordinatorLayout: CoordinatorLayout,
-                                   child: FrameLayout,
-                                   target: View,
-                                   dx: Int,
-                                   dy: Int,
-                                   consumed: IntArray,
-                                   type: Int) {
+//    override fun onNestedPreScroll(coordinatorLayout: CoordinatorLayout,
+//                                   child: FrameLayout,
+//                                   target: View,
+//                                   dx: Int,
+//                                   dy: Int,
+//                                   consumed: IntArray,
+//                                   type: Int) {
 //        if (type == ViewCompat.TYPE_NON_TOUCH) info {
 //            "\tNESTED PRE SCROLL - NON_TOUCH dx= $dx, dy= $dy"
 //        }
-    }
+//    }
 
     override fun onNestedScroll(coordinatorLayout: CoordinatorLayout,
                                 child: FrameLayout,
@@ -137,9 +137,9 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                         "dxUC=$dxUnconsumed, dyUC=$dyUnconsumed"
             }
 
-            if (!flingData.rvIsStopped) {
+            if (!flingData.overscrollDetected) {
                 if (absDyUC < flingData.maxDyUC) {
-                    flingData.rvIsStopped = true
+                    flingData.overscrollDetected = true
                     flingData.startTime = System.currentTimeMillis()
                     flingData.rvHeight = target.height
                     context.toast(flingData.toString())
@@ -152,7 +152,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                 }
             }
 
-            doStoppedAnimation(dyUnconsumed, target)
+            paintOverScroll(dyUnconsumed, target)
 
         } else {
 
@@ -179,16 +179,16 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
         }
     }
 
-    override fun onNestedPreFling(coordinatorLayout: CoordinatorLayout,
-                                  child: FrameLayout,
-                                  target: View,
-                                  velocityX: Float,
-                                  velocityY: Float): Boolean {
-        info {
-            "NESTED PRE FLING, vX=$velocityX, vY=$velocityY"
-        }
-        return false
-    }
+//    override fun onNestedPreFling(coordinatorLayout: CoordinatorLayout,
+//                                  child: FrameLayout,
+//                                  target: View,
+//                                  velocityX: Float,
+//                                  velocityY: Float): Boolean {
+//        info {
+//            "NESTED PRE FLING, vX=$velocityX, vY=$velocityY"
+//        }
+//        return false
+//    }
 
     override fun onNestedFling(coordinatorLayout: CoordinatorLayout,
                                child: FrameLayout,
@@ -196,6 +196,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                                velocityX: Float,
                                velocityY: Float,
                                consumed: Boolean): Boolean {
+        flingData.reset()
         flingData.vY = velocityY
         info {
             "NESTED FLING, vX=$velocityX, vY=$velocityY"
@@ -207,13 +208,13 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
 
     data class FlingData(var vY: Float = 0f,
                          var maxDyUC: Int = 0,
-                         var rvIsStopped: Boolean = false,
+                         var overscrollDetected: Boolean = false,
                          var startTime: Long = 0,
                          var rvHeight: Int = 0) {
         fun reset() {
             vY = 0f
             maxDyUC = 0
-            rvIsStopped = false
+            overscrollDetected = false
             startTime = 0
             rvHeight = 0
         }
@@ -221,12 +222,12 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
         override fun toString(): String {
             val ratio = (maxDyUC.toFloat() / rvHeight.toFloat() * 100).toInt()
             return "FlingData(vY=$vY, maxDyUC=$maxDyUC, rvH=$rvHeight, " +
-                    "ratio=$ratio%, rvStopped=$rvIsStopped)"
+                    "ratio=$ratio%, rvStopped=$overscrollDetected)"
         }
     }
 
-    private fun doStoppedAnimation(dyUnconsumed: Int, target: View) {
-        if (flingData.rvIsStopped) {
+    private fun paintOverScroll(dyUnconsumed: Int, target: View) {
+        if (flingData.overscrollDetected) {
             var fraction: Float = abs(dyUnconsumed.toFloat() / flingData.maxDyUC.toFloat())
             if (fraction > 1f) fraction = 1f
             val rv = target as? RecyclerView
