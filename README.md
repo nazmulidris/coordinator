@@ -166,7 +166,7 @@ override fun onStartNestedScroll(coordinatorLayout: CoordinatorLayout,
 
 ## 2. `onNestedScroll`
 This method is called repeatedly while the `RecyclerView` scrolls (fling or scroll). 
-In this method we can determine if the user has flung the `RecyclerView` and it has 
+In this method we can determine if the user has flung the `RecyclerView` and it
 can't scroll anymore. The `type` parameter lets us know if whether the user has flung 
 (`TYPE_NON_TOUCH`) or if the user is scrolling (`TYPE_TOUCH`). And if `dyUnconsumed` 
 has an integer (that is > 0) this means that the `RecyclerView` has stopped consuming 
@@ -180,3 +180,44 @@ They can launch another scroll / fling gesture while the previous one is settlin
 the `onNestedFling` method will be called, and that allows us to know that the fling / scroll 
 operation begins again. The `FlingData` object is reset when this occurs. The reset also occurs 
 when the `onStopNestedScroll` is called (and the overscroll comes to an end after settling).
+
+## Todo - Apply animation to the RecyclerView
+
+In `FooterBarBehavior.onNestedScroll()` take the `FlingData.ratio` as a signal for how much force 
+the user applied to the fling (after the RV has bumped into its top / bottom edge), and perform
+an animation on the RecyclerView.
+
+Here's an example of physics based animation on an entire RecyclerView.
+
+```kotlin
+// Use Physics based animator to bounce or pulse the entire RecyclerView
+private fun RecyclerView.animatePulse() {
+
+    val forceConstant = 500f
+    val scaleProperty = object : FloatPropertyCompat<View>("scaleProperty") {
+        override fun getValue(view: View): Float {
+            // Return the value of any one property
+            return view.scaleX
+        }
+
+        override fun setValue(view: View, value: Float) {
+            // Apply the same value to two properties
+            with(value / forceConstant + 1f) {
+                view.scaleX = this
+                view.scaleY = this
+            }
+        }
+    }
+    val force = (SpringForce()).apply {
+        finalPosition = 1f
+        dampingRatio = SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY
+        stiffness = SpringForce.STIFFNESS_MEDIUM
+    }
+    with(SpringAnimation(this, scaleProperty)) {
+        spring = force
+        setStartVelocity(2f * forceConstant)
+        start()
+    }
+
+}
+```

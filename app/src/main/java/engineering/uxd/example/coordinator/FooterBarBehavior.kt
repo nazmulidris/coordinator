@@ -143,6 +143,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                     flingData.startTime = System.currentTimeMillis()
                     flingData.rvHeight = target.height
                     context.toast(flingData.toString())
+                    // Todo - Apply animation to the RecyclerView.
                     info {
                         "\t\t\t[DO SOMETHING] NESTED SCROLL - NON_TOUCH " +
                                 "\n\t\t\t\t$flingData"
