@@ -17,6 +17,9 @@
 package engineering.uxd.example.coordinator
 
 import android.content.Context
+import android.support.animation.FloatPropertyCompat
+import android.support.animation.SpringAnimation
+import android.support.animation.SpringForce
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.view.ViewCompat
@@ -143,17 +146,20 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                     flingData.startTime = System.currentTimeMillis()
                     flingData.rvHeight = target.height
                     context.toast(flingData.toString())
-                    // Todo - Apply animation to the RecyclerView.
                     info {
                         "\t\t\t[DO SOMETHING] NESTED SCROLL - NON_TOUCH " +
                                 "\n\t\t\t\t$flingData"
                     }
+                    applyAnimationToRV(
+                            flingData.vY,
+                            flingData.getRatio(),
+                            target as RecyclerView)
                 } else {
                     flingData.maxDyUC = absDyUC
                 }
             }
 
-            //paintOverScroll(dyUnconsumed, target)
+            //paintDebugOverScroll(dyUnconsumed, target)
 
         } else {
 
@@ -165,6 +171,45 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
 
         }
 
+    }
+
+    // Todo - use the ration to generate the force
+    // Todo - use the vY direction (drag_down = -ve, drag_up = +ve) for animation
+    // Todo - use the spring force animation snippet
+    private fun applyAnimationToRV(vY: Float, ratio: Int, target: RecyclerView) {
+        val forceConstant = 500f
+        val forceApplied = when (ratio) {
+            in 0..5 -> 500f
+            in 6..10 -> 1500f
+            in 11..15 -> 5000f
+            in 15..30 -> 10000f
+            else -> 20000f
+        }
+        info { "NESTED SCROLL forceApplied=$forceApplied, ratio: $ratio" }
+        val scaleProperty = object : FloatPropertyCompat<View>("scaleProperty") {
+            var value = 0f
+            override fun getValue(view: View): Float {
+                return value
+            }
+
+            override fun setValue(view: View, value: Float) {
+                this.value = value
+                val scaleValue = (value / forceConstant) + 1f
+                info { "value = $value, scaleValue = $scaleValue" }
+                view.scaleY = scaleValue
+                view.translationY = value
+            }
+        }
+        val force = (SpringForce()).apply {
+            finalPosition = 1f
+            dampingRatio = SpringForce.DAMPING_RATIO_HIGH_BOUNCY
+            stiffness = SpringForce.STIFFNESS_LOW
+        }
+        with(SpringAnimation(target, scaleProperty)) {
+            spring = force
+            setStartVelocity(forceApplied)
+            start()
+        }
     }
 
     override fun onStopNestedScroll(coordinatorLayout: CoordinatorLayout,
@@ -221,13 +266,18 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
         }
 
         override fun toString(): String {
-            val ratio = (maxDyUC.toFloat() / rvHeight.toFloat() * 100).toInt()
-            return "FlingData(vY=$vY, maxDyUC=$maxDyUC, rvH=$rvHeight, " +
-                    "ratio=$ratio%, rvStopped=$overscrollDetected)"
+            return "FlingData(vY=$vY, maxDyUC=$maxDyUC, rvH=$rvHeight, \n\t\t\t\t" +
+                    "          ratio=${getRatio()}%, rvStopped=$overscrollDetected)"
         }
+
+        /*
+        @return Int between 0% and 25% to indicate the amount of the view would move
+        if the fling velocity was applied to scrolling the view.
+         */
+        fun getRatio() = (maxDyUC.toFloat() / rvHeight.toFloat() * 100).toInt()
     }
 
-    private fun paintOverScroll(dyUnconsumed: Int, target: View) {
+    private fun paintDebugOverscroll(dyUnconsumed: Int, target: View) {
         if (flingData.overscrollDetected) {
             var fraction: Float = abs(dyUnconsumed.toFloat() / flingData.maxDyUC.toFloat())
             if (fraction > 1f) fraction = 1f
