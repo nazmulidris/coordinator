@@ -196,7 +196,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                 this.value = value
                 val scaleValue = (value / forceConstant) + 1f
                 info { "value = $value, scaleValue = $scaleValue" }
-                view.scaleY = scaleValue
+                view.scaleX = scaleValue
                 view.translationY = value
             }
         }
