@@ -30,7 +30,8 @@ import android.widget.FrameLayout
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
-import java.time.LocalDateTime
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.math.abs
 
 /**
@@ -57,7 +58,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                     ", dependency=${dependency.javaClass.simpleName}" +
                     if (dependencyMet) " <- YES!!!" else ""
         }
-        setTag(child, "$value, ${LocalDateTime.now()}")
+        setTag(child, "$value, ${SimpleDateFormat("MM/dd/y hh:mm:sa").format(Date())}")
         return dependencyMet
     }
 
