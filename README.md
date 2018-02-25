@@ -2,6 +2,20 @@
 
 This project is all about `CoordinatorLayout` and nested scrolling.
 
+Table of Contents
+
+   * [CoordinatorLayout and nested scrolling](#coordinatorlayout-and-nested-scrolling)
+   * [Attaching the custom behavior to a child of the CoordinatorLayout](#attaching-the-custom-behavior-to-a-child-of-the-coordinatorlayout)
+      * [Meaning of the arguments](#meaning-of-the-arguments)
+      * [child reacting to changes in the <code>dependency</code> views](#child-reacting-to-changes-in-the-dependency-views)
+         * [1. layoutDependsOn(parent: CoordinatorLayout, child: FrameLayout, dependency: View)](#1-layoutdependsonparent-coordinatorlayout-child-framelayout-dependency-view)
+         * [2. onDependentViewChanged(parent: CoordinatorLayout, child: FrameLayout, dependency: View)](#2-ondependentviewchangedparent-coordinatorlayout-child-framelayout-dependency-view)
+      * [Key Value pairs](#key-value-pairs)
+   * [Nested scrolling](#nested-scrolling)
+      * [1. onStartNestedScroll](#1-onstartnestedscroll)
+      * [2. onNestedScroll](#2-onnestedscroll)
+      * [Todo - Apply animation to the RecyclerView](#todo---apply-animation-to-the-recyclerview)
+
 To learn more CoordinatorLayout, custom behaviors, and nested scrolling here are some great 
 articles:
 - [Intercepting everything with CoordinatorLayout Behaviors](https://goo.gl/oLH8pm)
