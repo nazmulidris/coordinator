@@ -1,9 +1,4 @@
-# `CoordinatorLayout` and nested scrolling
-
-This project is all about `CoordinatorLayout` and nested scrolling.
-
 Table of Contents
-
    * [CoordinatorLayout and nested scrolling](#coordinatorlayout-and-nested-scrolling)
    * [Attaching the custom behavior to a child of the CoordinatorLayout](#attaching-the-custom-behavior-to-a-child-of-the-coordinatorlayout)
       * [Meaning of the arguments](#meaning-of-the-arguments)
@@ -15,6 +10,10 @@ Table of Contents
       * [1. onStartNestedScroll](#1-onstartnestedscroll)
       * [2. onNestedScroll](#2-onnestedscroll)
       * [Todo - Apply animation to the RecyclerView](#todo---apply-animation-to-the-recyclerview)
+
+# `CoordinatorLayout` and nested scrolling
+
+This project is all about `CoordinatorLayout` and nested scrolling.
 
 To learn more CoordinatorLayout, custom behaviors, and nested scrolling here are some great 
 articles:
