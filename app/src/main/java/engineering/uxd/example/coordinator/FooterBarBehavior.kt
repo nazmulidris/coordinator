@@ -186,7 +186,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
             in 15..30 -> 10000f
             else -> 20000f
         }
-        info { "NESTED SCROLL forceApplied=$forceApplied, ratio: $ratio" }
+        info { "NESTED SCROLL forceApplied=$forceApplied, ratio=$ratio, vY=$vY" }
         val scaleProperty = object : FloatPropertyCompat<View>("scaleProperty") {
             var value = 0f
             override fun getValue(view: View): Float {

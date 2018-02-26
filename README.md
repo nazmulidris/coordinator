@@ -203,34 +203,62 @@ an animation on the RecyclerView.
 Here's an example of physics based animation on an entire RecyclerView.
 
 ```kotlin
-// Use Physics based animator to bounce or pulse the entire RecyclerView
-private fun RecyclerView.animatePulse() {
-
+private fun applyAnimationToRV(vY: Float, ratio: Int, target: RecyclerView) {
     val forceConstant = 500f
+    val forceApplied = when (ratio) {
+        in 0..5 -> 500f
+        in 6..10 -> 1500f
+        in 11..15 -> 5000f
+        in 15..30 -> 10000f
+        else -> 20000f
+    }
+    info { "NESTED SCROLL forceApplied=$forceApplied, ratio=$ratio, vY=$vY" }
     val scaleProperty = object : FloatPropertyCompat<View>("scaleProperty") {
+        var value = 0f
         override fun getValue(view: View): Float {
-            // Return the value of any one property
-            return view.scaleX
+            return value
         }
 
         override fun setValue(view: View, value: Float) {
-            // Apply the same value to two properties
-            with(value / forceConstant + 1f) {
-                view.scaleX = this
-                view.scaleY = this
-            }
+            this.value = value
+            val scaleValue = (value / forceConstant) + 1f
+            info { "value = $value, scaleValue = $scaleValue" }
+            view.scaleX = scaleValue
+            view.translationY = value
         }
     }
     val force = (SpringForce()).apply {
         finalPosition = 1f
-        dampingRatio = SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY
-        stiffness = SpringForce.STIFFNESS_MEDIUM
+        dampingRatio = SpringForce.DAMPING_RATIO_HIGH_BOUNCY
+        stiffness = SpringForce.STIFFNESS_LOW
     }
-    with(SpringAnimation(this, scaleProperty)) {
+    with(SpringAnimation(target, scaleProperty)) {
         spring = force
-        setStartVelocity(2f * forceConstant)
+        setStartVelocity(forceApplied)
         start()
     }
-
 }
 ```
+
+In the code above, the `startVelocity` is derived from the `ratio` integer. The `ratio` is derived
+from how hard the user flung the nested scrolling view (RV), and it represents the energy that
+still remains after the RV has stopped scrolling up / down (since it's hit the top / bottom). This
+`ratio` number varies between `0` and `30`. Also, the `vY` float that is passed to the 
+`applyAnimationToRV()` method holds the fling direction. 
+```
+Finger drag down 👇 -> vY is positive
+Finger drag up   👆 -> vY is negative
+```
+
+The `SpringForce` object determines how bouncy and firm the spring motion is. And ultimately this 
+force will go to `1f` at the end of the animation. However, depending on the size of the 
+`startVelocity` that is applied, this will cause the animated value to be much greater than 1f
+and have it swing between positive and negative float values. This `value` is applied to the
+`translationY` property of the RV, which makes it move up and down in the Y axis. 
+
+There's another value `scaleValue` that is derived from the `value` and the `forceConstant`. This
+float `scaleValue` hovers around `1f`, it goes a little below and a little above, but not too much.
+It doesn't go between positive and negative values (like `value` does). The `scaleValue` is then
+applied to the `scaleX` property of the RV. 
+
+Together, this makes the RV bouncy, like a marshmallow 😁.
