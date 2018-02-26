@@ -194,7 +194,7 @@ the `onNestedFling` method will be called, and that allows us to know that the f
 operation begins again. The `FlingData` object is reset when this occurs. The reset also occurs 
 when the `onStopNestedScroll` is called (and the overscroll comes to an end after settling).
 
-## Todo - Apply animation to the RecyclerView
+## Apply animation to the `RecyclerView`
 
 In `FooterBarBehavior.onNestedScroll()` take the `FlingData.ratio` as a signal for how much force 
 the user applied to the fling (after the RV has bumped into its top / bottom edge), and perform

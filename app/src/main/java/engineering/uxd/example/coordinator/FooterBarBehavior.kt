@@ -174,10 +174,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
 
     }
 
-    // Todo - use the ration to generate the force
-    // Todo - use the vY direction (drag_down = -ve, drag_up = +ve) for animation
-    // Todo - use the spring force animation snippet
-    private fun applyAnimationToRV(vY: Float, ratio: Int, target: RecyclerView) {
+\    private fun applyAnimationToRV(vY: Float, ratio: Int, target: RecyclerView) {
         val forceConstant = 500f
         val forceApplied = when (ratio) {
             in 0..5 -> 500f
