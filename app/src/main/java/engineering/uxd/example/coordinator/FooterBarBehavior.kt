@@ -174,7 +174,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
 
     }
 
-\    private fun applyAnimationToRV(vY: Float, ratio: Int, target: RecyclerView) {
+    private fun applyAnimationToRV(vY: Float, ratio: Int, target: RecyclerView) {
         val forceConstant = 500f
         val forceApplied = when (ratio) {
             in 0..5 -> 500f
