@@ -141,7 +141,15 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                         "dxUC=$dxUnconsumed, dyUC=$dyUnconsumed"
             }
 
-            if (!flingData.overscrollDetected) {
+            // This method (onNestedScroll) gets called repeatedly as this scrolling is occurring.
+            // absDyUC starts at some value, then within a few ms increases in value, then hits a
+            // max, then starts to reduce in value. We capture this max, and then use it to trigger
+            // an animation on the RV w/ force derived from this max value (which is roughly how
+            // far this view would move it were to be scrolled). We take this value and then compute
+            // a ratio of the visible height of the view (that isn't scrolling) to get an idea of
+            // the force that's left over from the user's fling motion.
+
+            if (flingData.overscrollDetected == false) {
                 if (absDyUC < flingData.maxDyUC) {
                     flingData.overscrollDetected = true
                     flingData.startTime = System.currentTimeMillis()
@@ -151,10 +159,11 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                         "\t\t\t[DO SOMETHING] NESTED SCROLL - NON_TOUCH " +
                                 "\n\t\t\t\t$flingData"
                     }
-                    applyAnimationToRV(
-                            flingData.vY,
-                            flingData.getRatio(),
-                            target as RecyclerView)
+                    if (target is RecyclerView)
+                        applyAnimationToRV(
+                                flingData.vY,
+                                flingData.getRatio(),
+                                target)
                 } else {
                     flingData.maxDyUC = absDyUC
                 }
