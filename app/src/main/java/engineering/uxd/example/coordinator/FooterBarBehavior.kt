@@ -183,9 +183,6 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
 
     }
 
-    // Todo - use the ration to generate the force
-    // Todo - use the vY direction (drag_down = -ve, drag_up = +ve) for animation
-    // Todo - use the spring force animation snippet
     private fun applyAnimationToRV(vY: Float, ratio: Int, target: RecyclerView) {
         val forceConstant = 500f
         val forceApplied = when (ratio) {
@@ -195,7 +192,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
             in 15..30 -> 10000f
             else -> 20000f
         }
-        info { "NESTED SCROLL forceApplied=$forceApplied, ratio: $ratio" }
+        info { "NESTED SCROLL forceApplied=$forceApplied, ratio=$ratio, vY=$vY" }
         val scaleProperty = object : FloatPropertyCompat<View>("scaleProperty") {
             var value = 0f
             override fun getValue(view: View): Float {
