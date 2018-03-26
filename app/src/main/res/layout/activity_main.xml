@@ -19,12 +19,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!--Add custom behavior-->
     <android.support.v7.widget.RecyclerView
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:padding="4dp"
         android:id="@+id/recyclerview_main_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:background="?attr/cardBackgroundColor" />
 
     <android.support.design.widget.AppBarLayout
@@ -37,16 +38,16 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:titleTextColor="?attr/titleTextColor"
-            />
+            app:titleTextColor="?attr/titleTextColor" />
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout xmlns:my_app="http://example.com"
+    <!--Add custom behavior-->
+    <FrameLayout xmlns:my_app="example.com"
+        app:layout_behavior="engineering.uxd.example.coordinator.FooterBarBehavior"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        my_app:my_key="my_value"
-        app:layout_behavior="engineering.uxd.example.coordinator.FooterBarBehavior">
+        my_app:my_key="my_value">
 
         <TextView
             android:layout_width="match_parent"
@@ -55,8 +56,7 @@
             android:gravity="center"
             android:text="Footer View"
             android:textColor="?attr/titleTextColor"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            />
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

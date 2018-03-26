@@ -41,7 +41,7 @@ import kotlin.math.abs
 class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
         CoordinatorLayout.Behavior<FrameLayout>(context, attrs),
         AnkoLogger {
-    var value: String = attrs.getAttributeValue("http://example.com", "my_key")
+    var value: String = attrs.getAttributeValue("example.com", "my_key")
 
     /**
      * This custom behavior depends on the [AppBarLayout] object. So make sure to return
