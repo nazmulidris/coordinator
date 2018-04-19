@@ -56,7 +56,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
             "DEPENDENCY CHECK: " +
                     "\nchild=${child.javaClass.simpleName}" +
                     ", dependency=${dependency.javaClass.simpleName}" +
-                    if (dependencyMet) " <- YES!!!" else ""
+                    if (dependencyMet) " <- YES!!!" else " <- NO"
         }
         setTag(child, "$value, ${SimpleDateFormat("MM/dd/y hh:mm:sa").format(Date())}")
         return dependencyMet
@@ -70,7 +70,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                                         child: FrameLayout,
                                         dependency: View): Boolean {
         info {
-            "REACT TO DEPENDENCY CHANGE: " +
+            "REACT TO DEPENDENCY CHANGED: " +
                     "\nAppBarLayout changed!!!" +
                     "\nchild=${child.javaClass.simpleName}" +
                     ", dependency=${dependency.javaClass.simpleName}" +
@@ -85,7 +85,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                                         child: FrameLayout,
                                         dependency: View) {
         info {
-            "REACT TO DEPENDENCY BEING REMOVED " +
+            "REACT TO DEPENDENCY REMOVED " +
                     "\nAppBarLayout removed!!!" +
                     "\nchild=${child.javaClass.simpleName}" +
                     ", dependency=${dependency.javaClass.simpleName}" +
@@ -102,6 +102,10 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
         if (type == ViewCompat.TYPE_NON_TOUCH) {
             info {
                 "START NESTED SCROLL - NON_TOUCH"
+            }
+        } else {
+            info {
+                "START NESTED SCROLL - TOUCH"
             }
         }
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL ||
@@ -202,7 +206,7 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
             override fun setValue(view: View, value: Float) {
                 this.value = value
                 val scaleValue = (value / forceConstant) + 1f
-                info { "value = $value, scaleValue = $scaleValue" }
+                info { "scaleProperty: value = $value, scaleValue = $scaleValue" }
                 view.scaleX = scaleValue
                 view.translationY = value
             }
@@ -243,6 +247,10 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
 //        return false
 //    }
 
+    /**
+     * This method is used primarily to call [FlingData.reset], so that overscroll animation
+     * on the RecyclerView can work. Nothing is really done with the velocity X and Y values.
+     */
     override fun onNestedFling(coordinatorLayout: CoordinatorLayout,
                                child: FrameLayout,
                                target: View,

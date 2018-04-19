@@ -27,20 +27,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:background="?attr/cardBackgroundColor" />
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:titleTextColor="?attr/titleTextColor"
-            />
-    </android.support.design.widget.AppBarLayout>
-
     <FrameLayout xmlns:my_app="http://example.com"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,5 +44,18 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             />
     </FrameLayout>
+
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:titleTextColor="?attr/titleTextColor" />
+    </android.support.design.widget.AppBarLayout>
 
 </android.support.design.widget.CoordinatorLayout>
