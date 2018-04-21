@@ -12,7 +12,7 @@ Table of Contents
    * [Nested scrolling](#nested-scrolling)
       * [1. onStartNestedScroll](#1-onstartnestedscroll)
       * [2. onNestedScroll](#2-onnestedscroll)
-      * [Apply animation to the RecyclerView](#apply-animation-to-the-recyclerview)
+   * [Apply physics based animation to the RecyclerView](#apply-physics-based-animation-to-the-recyclerview)
 
 # `CoordinatorLayout` and nested scrolling
 
@@ -202,7 +202,7 @@ the `onNestedFling` method will be called, and that allows us to know that the f
 operation begins again. The `FlingData` object is reset when this occurs. The reset also occurs 
 when the `onStopNestedScroll` is called (and the overscroll comes to an end after settling).
 
-## Apply animation to the `RecyclerView`
+## Apply physics based animation to the `RecyclerView`
 
 In `FooterBarBehavior.onNestedScroll()` take the `FlingData.ratio` as a signal for how much force 
 the user applied to the fling (after the RV has bumped into its top / bottom edge), and perform
