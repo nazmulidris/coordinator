@@ -1,5 +1,6 @@
 Table of Contents
    * [CoordinatorLayout and nested scrolling](#coordinatorlayout-and-nested-scrolling)
+   * [Screenshot of app in action](#screenshot-of-app-in-action)
    * [Attaching the custom behavior to a child of the CoordinatorLayout](#attaching-the-custom-behavior-to-a-child-of-the-coordinatorlayout)
       * [Meaning of the arguments](#meaning-of-the-arguments)
       * [child reacting to changes in the <code>dependency</code> views](#child-reacting-to-changes-in-the-dependency-views)
