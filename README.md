@@ -1,4 +1,6 @@
 Table of Contents
+=================
+
    * [CoordinatorLayout and nested scrolling](#coordinatorlayout-and-nested-scrolling)
    * [Screenshot of app in action](#screenshot-of-app-in-action)
    * [Attaching the custom behavior to a child of the CoordinatorLayout](#attaching-the-custom-behavior-to-a-child-of-the-coordinatorlayout)
@@ -10,7 +12,7 @@ Table of Contents
    * [Nested scrolling](#nested-scrolling)
       * [1. onStartNestedScroll](#1-onstartnestedscroll)
       * [2. onNestedScroll](#2-onnestedscroll)
-      * [Todo - Apply animation to the RecyclerView](#todo---apply-animation-to-the-recyclerview)
+      * [Apply animation to the RecyclerView](#apply-animation-to-the-recyclerview)
 
 # `CoordinatorLayout` and nested scrolling
 
