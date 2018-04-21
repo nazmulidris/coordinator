@@ -21,6 +21,11 @@ articles:
 - [Experimenting with Nested Scrolling](https://goo.gl/w8Jrq2)
 - [Carry on Scrolling](https://goo.gl/1dwU8S)
 
+# Screenshot of app in action
+<img 
+src="https://raw.githubusercontent.com/nazmulidris/coordinator/master/docs/screenshot.gif" 
+width="400">
+
 # Attaching the custom behavior to a child of the `CoordinatorLayout`
 
 The main layout XML file has a `FrameLayout` view group that has a custom behavior called 
