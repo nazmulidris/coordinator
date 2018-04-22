@@ -19,7 +19,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 'android-P'
+    compileSdkVersion 27
     defaultConfig {
         applicationId "engineering.uxd.example.coordinator"
         minSdkVersion 16
