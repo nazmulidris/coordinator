@@ -134,10 +134,31 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                                 dyUnconsumed: Int,
                                 type: Int) {
         val absDyUC = abs(dyUnconsumed)
-        val rvStoppedScrolling = type == ViewCompat.TYPE_NON_TOUCH && absDyUC > 0
-        //val rvStoppedScrolling = absDyUC > 0
 
-        if (rvStoppedScrolling) {
+        // RV can't scroll but user hasn't lifted their finger (drag, not fling)
+        if (absDyUC > 0 && type == ViewCompat.TYPE_TOUCH) {
+            info { "[RV__STOP...]" }
+            if (flingData.overscrollDetected == false) {
+                val ratio = (absDyUC.toFloat() / target.height.toFloat() * 1000f).toInt()
+                val applied = when (ratio) {
+                    in 0..5 -> 1f
+                    in 6..10 -> 0.7f
+                    in 11..15 -> 0.5f
+                    in 15..30 -> 0.3f
+                    else -> 0.1f
+                }
+                if (target is RecyclerView) {
+                    target.alpha = applied
+                }
+                info { "[RV__DO ANIM FOR OVERSCROLL] absDyUC=$absDyUC, ratio=$ratio" }
+            }
+        } else {
+            info { "[RV__MOVE...]" }
+            target.alpha = 1f
+        }
+
+        // RV can't scroll anymore and user has lifted their finger (fling, not drag)
+        if (type == ViewCompat.TYPE_NON_TOUCH && absDyUC > 0) {
 
             info {
                 "\t\t[RV_STOP] NESTED SCROLL - NON_TOUCH " +
