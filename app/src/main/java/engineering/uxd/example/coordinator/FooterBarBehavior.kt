@@ -133,9 +133,10 @@ class FooterBarBehavior(val context: Context, attrs: AttributeSet) :
                                 dxUnconsumed: Int,
                                 dyUnconsumed: Int,
                                 type: Int) {
-        // RV has hit the top / bottom edge and can't scroll anymore.
         val absDyUC = abs(dyUnconsumed)
-        val rvStoppedScrolling = type == ViewCompat.TYPE_NON_TOUCH && absDyUC > 0
+
+        // RV has hit the top / bottom edge and can't scroll anymore.
+        val rvStoppedScrolling = absDyUC > 0
 
         if (rvStoppedScrolling) {
 
